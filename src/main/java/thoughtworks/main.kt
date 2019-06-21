@@ -1,6 +1,3 @@
-import org.funktionale.currying.*
-import org.funktionale.composition.*
-
 object Constants {
     const val Book = "Book"
     const val Electronics = "Electronics"
@@ -16,7 +13,7 @@ data class Product(val id: String, val name: String, val price: Double, val cate
 
 data class BookInfo(val bookType: String, val format: String)
 
-data class UserSelectedProduct(val product: Product, val quantity: Int)
+data class CartItem(val product: Product, val quantity: Int)
 
 fun main() {
 
@@ -39,25 +36,25 @@ fun main() {
             BookInfo(Constants.Paperback, Constants.Softcover) to 100.00
     )
 
-    val userSelectedProducts = getProductsFromUser(catalog, emptyArray())
+    val cart = getCart(catalog, emptyArray())
 
 }
 
-tailrec fun getProductsFromUser(catalog: Collection<Product>, userProducts: Array<UserSelectedProduct>):
-        Array<UserSelectedProduct> {
+tailrec fun getCart(catalog: Collection<Product>, userProducts: Array<CartItem>):
+        Array<CartItem> {
 
-    val updatedUserProducts = arrayOf(
+    val updatedCart = arrayOf(
             *(userProducts),
-            getUserSelectedProduct(catalog)
+            getCartItem(catalog)
     )
-    return if (isUserRequireMoreProducts()) getProductsFromUser(catalog, updatedUserProducts) else updatedUserProducts
+    return if (isUserRequireMoreProducts()) getCart(catalog, updatedCart) else updatedCart
 }
 
-fun getUserSelectedProduct(catalog: Collection<Product>): UserSelectedProduct {
+fun getCartItem(catalog: Collection<Product>): CartItem {
     val product = getProduct(catalog, promptUser("Enter the product id wish for", catalog.map {
         it.id
     }))
-    return UserSelectedProduct(product, 1)
+    return CartItem(product, 1)
 }
 
 fun getProduct(catalog: Collection<Product>, productId: String) = catalog.first { it.id == productId }
